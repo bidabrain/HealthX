@@ -204,8 +204,8 @@ private fun RecentRow(r: BpRecord) {
         Text(Format.dateTime(r.timestamp), fontSize = 13.sp, modifier = Modifier.weight(1f),
             color = MaterialTheme.colorScheme.onSurface)
         Text("${r.systolic} / ${r.diastolic}", fontSize = 13.sp, fontWeight = FontWeight.Medium,
-            modifier = Modifier.width(72.dp))
+            modifier = Modifier.width(96.dp))
         Text("${r.heartRate}", fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.width(36.dp))
+            modifier = Modifier.width(44.dp))
     }
 }

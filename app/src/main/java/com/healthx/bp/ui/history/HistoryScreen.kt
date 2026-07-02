@@ -79,8 +79,8 @@ fun HistoryScreen(onAdd: () -> Unit, onExport: () -> Unit, onEdit: (Long) -> Uni
             item {
                 Row(Modifier.fillMaxWidth().padding(horizontal = 4.dp, vertical = 4.dp)) {
                     Text("日期时间", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.weight(1f))
-                    Text("血压(mmHg)", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.width(84.dp))
-                    Text("心率", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.width(36.dp))
+                    Text("血压(mmHg)", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.width(104.dp))
+                    Text("心率", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.width(48.dp))
                 }
             }
             if (desc.isEmpty()) {
@@ -121,10 +121,10 @@ private fun HistoryRow(r: BpRecord, onLongPress: () -> Unit) {
                 Text(r.note, fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1)
             }
         }
-        Text("${r.systolic} / ${r.diastolic}", fontSize = 14.sp, fontWeight = FontWeight.Medium, modifier = Modifier.width(84.dp))
-        Row(Modifier.width(52.dp), verticalAlignment = Alignment.CenterVertically) {
+        Text("${r.systolic} / ${r.diastolic}", fontSize = 14.sp, fontWeight = FontWeight.Medium, modifier = Modifier.width(104.dp))
+        Row(Modifier.width(68.dp), verticalAlignment = Alignment.CenterVertically) {
             Text("${r.heartRate}", fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.weight(1f))
-            IconButton(onClick = onLongPress, modifier = Modifier.size(24.dp)) {
+            IconButton(onClick = onLongPress, modifier = Modifier.size(30.dp)) {
                 Text("⋮", fontSize = 18.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }

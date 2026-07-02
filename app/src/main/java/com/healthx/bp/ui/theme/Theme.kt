@@ -6,11 +6,21 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.unit.Density
 import androidx.core.view.WindowCompat
+
+/**
+ * Global font enlargement for readability (elderly-friendly). Applied on top of
+ * the system font scale. Everything is sized in sp, so this scales all text —
+ * record lists, chart labels, buttons — uniformly while keeping dp layout.
+ */
+const val AppFontScale = 1.25f
 
 private val LightColors = lightColorScheme(
     primary = Primary,
@@ -63,7 +73,13 @@ fun HealthXTheme(
 
     MaterialTheme(
         colorScheme = colors,
-        typography = AppTypography,
-        content = content
-    )
+        typography = AppTypography
+    ) {
+        val density = LocalDensity.current
+        CompositionLocalProvider(
+            LocalDensity provides Density(density.density, density.fontScale * AppFontScale)
+        ) {
+            content()
+        }
+    }
 }

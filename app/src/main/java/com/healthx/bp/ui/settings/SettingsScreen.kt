@@ -1,5 +1,7 @@
 package com.healthx.bp.ui.settings
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -56,6 +58,7 @@ fun SettingsScreen(onSync: () -> Unit) {
     var showClear by remember { mutableStateOf(false) }
     var showTheme by remember { mutableStateOf(false) }
     var showPinSetup by remember { mutableStateOf(false) }
+    var showAbout by remember { mutableStateOf(false) }
 
     // Full-screen PIN setup overlay.
     if (showPinSetup) {
@@ -99,10 +102,42 @@ fun SettingsScreen(onSync: () -> Unit) {
 
         GroupLabel("关于")
         SectionCard(padding = androidx.compose.foundation.layout.PaddingValues(vertical = 4.dp)) {
-            SettingRow(null, "关于我们", onClick = {})
-            ValueRow("版本", "1.0.0")
+            SettingRow(null, "关于", onClick = { showAbout = true })
+            ValueRow("版本", com.healthx.bp.BuildConfig.VERSION_NAME)
         }
         Spacer(Modifier.height(16.dp))
+    }
+
+    if (showAbout) {
+        val repoUrl = "https://github.com/bidabrain/HealthX"
+        val openRepo = {
+            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(repoUrl)))
+        }
+        AlertDialog(
+            onDismissRequest = { showAbout = false },
+            title = { Text("关于 HealthX") },
+            text = {
+                Column {
+                    Text(
+                        "HealthX 是一款简洁的血压记录工具：记录收缩压、舒张压与心率并按指南自动分级，" +
+                            "查看历史趋势与统计；支持 WebDAV 多设备同步与历史回滚，" +
+                            "并可将记录导出为图片或 CSV 分享。",
+                        fontSize = 14.sp
+                    )
+                    Spacer(Modifier.height(14.dp))
+                    Text("开源地址", fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
+                    Spacer(Modifier.height(2.dp))
+                    Text(
+                        repoUrl,
+                        fontSize = 13.sp,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.clickable { openRepo() }
+                    )
+                }
+            },
+            confirmButton = { TextButton(onClick = { openRepo(); showAbout = false }) { Text("在 GitHub 打开") } },
+            dismissButton = { TextButton(onClick = { showAbout = false }) { Text("关闭") } }
+        )
     }
 
     if (showClear) {

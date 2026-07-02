@@ -26,8 +26,6 @@
 | 序列化 | kotlinx.serialization（备份 JSON） |
 | 架构 | MVVM：ViewModel + StateFlow + Repository，手写依赖图（`AppGraph`） |
 
-### 为什么用 SQLite / Room
-血压是结构化的单表数据，量小、查询简单（按时间范围排序与聚合），SQLite 完全够用。Room 在 SQLite 之上提供编译期 SQL 校验、对象映射与协程/Flow 响应式支持。
 
 ## 目录结构
 
@@ -49,11 +47,7 @@ app/src/main/java/com/healthx/bp/
 └─ util/                    # 格式化、图片导出、分享、ViewModel 工厂
 ```
 
-## 数据表
 
-`bp_record(id, timestamp, systolic, diastolic, heartRate, status, note)`
-- `timestamp`：epoch 毫秒
-- `status`：`low | normal | elevated | high`
 
 ## 构建运行
 
@@ -66,9 +60,7 @@ app/src/main/java/com/healthx/bp/
    ```
 4. 运行到设备/模拟器（minSdk 26 / Android 8.0+）。
 
-## 图标
 
-启动图标已从 `icon.png` 中裁出蓝色徽标，生成各密度 `mipmap-*/ic_launcher.png`。
 
 ## WebDAV 使用说明
 
