@@ -1,0 +1,39 @@
+# ---- Gradle / build output (local test builds) ----
+.gradle/
+build/
+*/build/
+.kotlin/
+build-log.txt
+*.log
+
+# ---- Local, machine-specific & private ----
+# Contains the local Android SDK path — must not be committed.
+local.properties
+# Signing material — keep private.
+*.jks
+*.keystore
+keystore.properties
+key.properties
+
+# ---- Android / IDE ----
+.idea/
+*.iml
+captures/
+.externalNativeBuild/
+.cxx/
+local.gradle
+
+# ---- Build artifacts ----
+*.apk
+*.aab
+*.ap_
+*.aar
+*.dex
+*.class
+
+# ---- OS junk ----
+.DS_Store
+Thumbs.db
+
+# ---- Stray generated preview ----
+app/src/main/ic_launcher_preview.png
