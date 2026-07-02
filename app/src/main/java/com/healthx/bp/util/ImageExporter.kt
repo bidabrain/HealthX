@@ -19,7 +19,8 @@ import kotlin.math.min
  */
 object ImageExporter {
 
-    private const val W = 1080
+    private const val W = 1080       // internal design width
+    private const val OUTPUT_W = 640 // final output width (downscaled — legible, not photo-sized)
     private const val PAD = 48f
 
     private val CLR_TEXT = 0xFF1C2330.toInt()
@@ -96,7 +97,16 @@ object ImageExporter {
         p.textAlign = Paint.Align.RIGHT
         canvas.drawText("生成时间：${Format.dateTime(generatedAt)}", W - PAD, y + 30f, p)
 
-        return bmp
+        return downscale(bmp, OUTPUT_W)
+    }
+
+    /** Downscale the rendered image so the output is legible but not photo-sized. */
+    private fun downscale(src: Bitmap, targetW: Int): Bitmap {
+        if (src.width <= targetW) return src
+        val targetH = (src.height.toLong() * targetW / src.width).toInt().coerceAtLeast(1)
+        val scaled = Bitmap.createScaledBitmap(src, targetW, targetH, true)
+        if (scaled != src) src.recycle()
+        return scaled
     }
 
     private fun drawAvgBox(c: Canvas, p: Paint, x: Float, y: Float, w: Float, label: String, value: String, unit: String, accent: Int) {

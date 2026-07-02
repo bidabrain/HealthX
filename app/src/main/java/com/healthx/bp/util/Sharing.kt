@@ -24,11 +24,20 @@ object Sharing {
         return FileProvider.getUriForFile(context, authority(context), file)
     }
 
-    /** Write [bitmap] to a cache PNG and return a shareable content:// Uri. */
+    private const val JPEG_QUALITY = 90
+
+    /** Pick compress format + quality from the file/display name extension. */
+    private fun formatFor(name: String): Pair<Bitmap.CompressFormat, Int> =
+        if (name.endsWith(".jpg", true) || name.endsWith(".jpeg", true))
+            Bitmap.CompressFormat.JPEG to JPEG_QUALITY
+        else Bitmap.CompressFormat.PNG to 100
+
+    /** Write [bitmap] to a cache image and return a shareable content:// Uri. */
     fun cacheBitmapUri(context: Context, fileName: String, bitmap: Bitmap): Uri {
         val dir = File(context.cacheDir, "images").apply { mkdirs() }
         val file = File(dir, fileName)
-        FileOutputStream(file).use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        val (fmt, q) = formatFor(fileName)
+        FileOutputStream(file).use { bitmap.compress(fmt, q, it) }
         return FileProvider.getUriForFile(context, authority(context), file)
     }
 
@@ -43,17 +52,19 @@ object Sharing {
 
     /** Save a bitmap to the public Pictures/HealthX album. Returns true on success. */
     fun saveBitmapToGallery(context: Context, bitmap: Bitmap, displayName: String): Boolean {
+        val (fmt, q) = formatFor(displayName)
+        val mime = if (fmt == Bitmap.CompressFormat.JPEG) "image/jpeg" else "image/png"
         return try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 val values = ContentValues().apply {
                     put(MediaStore.Images.Media.DISPLAY_NAME, displayName)
-                    put(MediaStore.Images.Media.MIME_TYPE, "image/png")
+                    put(MediaStore.Images.Media.MIME_TYPE, mime)
                     put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/HealthX")
                     put(MediaStore.Images.Media.IS_PENDING, 1)
                 }
                 val resolver = context.contentResolver
                 val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values) ?: return false
-                resolver.openOutputStream(uri)?.use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+                resolver.openOutputStream(uri)?.use { bitmap.compress(fmt, q, it) }
                 values.clear()
                 values.put(MediaStore.Images.Media.IS_PENDING, 0)
                 resolver.update(uri, values, null, null)
@@ -62,7 +73,7 @@ object Sharing {
                 @Suppress("DEPRECATION")
                 val dir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "HealthX").apply { mkdirs() }
                 val file = File(dir, displayName)
-                FileOutputStream(file).use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+                FileOutputStream(file).use { bitmap.compress(fmt, q, it) }
                 MediaStore.Images.Media.insertImage(context.contentResolver, file.absolutePath, displayName, null)
                 true
             }

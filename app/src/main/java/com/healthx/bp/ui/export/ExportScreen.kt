@@ -112,7 +112,7 @@ fun ExportScreen(onBack: () -> Unit) {
                 ) {
                     OutlinedButton(
                         onClick = {
-                            val ok = Sharing.saveBitmapToGallery(context, preview, "HealthX_${System.currentTimeMillis()}.png")
+                            val ok = Sharing.saveBitmapToGallery(context, preview, "HealthX_${System.currentTimeMillis()}.jpg")
                             Toast.makeText(context, if (ok) "已保存到相册" else "保存失败", Toast.LENGTH_SHORT).show()
                         },
                         modifier = Modifier.weight(1f).height(48.dp)
@@ -122,8 +122,8 @@ fun ExportScreen(onBack: () -> Unit) {
                     }
                     Button(
                         onClick = {
-                            val uri = Sharing.cacheBitmapUri(context, "HealthX_share.png", preview)
-                            Sharing.shareFile(context, uri, "image/png", "分享血压记录")
+                            val uri = Sharing.cacheBitmapUri(context, "HealthX_share.jpg", preview)
+                            Sharing.shareFile(context, uri, "image/jpeg", "分享血压记录")
                         },
                         modifier = Modifier.weight(1f).height(48.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
