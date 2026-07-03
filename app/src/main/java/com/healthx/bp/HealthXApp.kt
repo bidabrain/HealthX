@@ -36,6 +36,10 @@ class HealthXApp : Application() {
 
     private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
+    // Throttle for automatic (foreground/background) syncs. Manual "立即同步" bypasses this.
+    @Volatile private var lastAutoSyncAt = 0L
+    private val autoSyncMinIntervalMs = 30_000L
+
     override fun onCreate() {
         super.onCreate()
         graph = AppGraph(this)
@@ -51,8 +55,11 @@ class HealthXApp : Application() {
         })
     }
 
-    /** Fire-and-forget background sync if WebDAV sync is enabled. */
+    /** Fire-and-forget background sync if WebDAV sync is enabled (throttled). */
     fun triggerAutoSync() {
+        val now = System.currentTimeMillis()
+        if (now - lastAutoSyncAt < autoSyncMinIntervalMs) return
+        lastAutoSyncAt = now
         appScope.launch {
             val settings = graph.settingsRepository.settings.first()
             if (settings.webDav.enabled) {

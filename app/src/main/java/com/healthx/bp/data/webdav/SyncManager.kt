@@ -59,6 +59,15 @@ class SyncManager(private val repository: BpRepository) {
                     // Pull remote-side additions/updates/tombstones into local.
                     repository.mergeApply(merged)
 
+                    // No-op sync: merge result already equals the remote → don't snapshot
+                    // or upload (avoids redundant history snapshots and network writes).
+                    if (sameContent(merged, remoteRecords)) {
+                        return@runCatching SyncResult(
+                            activeCount = merged.count { !it.deleted },
+                            totalWithTombstones = merged.size
+                        )
+                    }
+
                     // Keep a rollback snapshot of what was on the server before we overwrite it.
                     if (remote.exists) client.snapshotAndPrune(now, remote.content!!)
 
@@ -130,6 +139,10 @@ class SyncManager(private val repository: BpRepository) {
                 willRestore
             }
         }
+
+    /** Content equality ignoring the local-only [BpRecord.id]. */
+    private fun sameContent(a: List<BpRecord>, b: List<BpRecord>): Boolean =
+        a.map { it.copy(id = 0) }.sortedBy { it.uid } == b.map { it.copy(id = 0) }.sortedBy { it.uid }
 
     /** Union by uid; for the same uid keep the larger updatedAt (tie → remote, already placed). */
     private fun merge(local: List<BpRecord>, remote: List<BpRecord>): List<BpRecord> {
